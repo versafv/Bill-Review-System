@@ -207,13 +207,11 @@ tag 的作用：以后无论代码改了多少版，`git checkout v0.1-docs` 就
 
 ## 五、分工建议
 
-一个功能由同一个人负责（后端 Controller 到前端组件一条龙），避免多人同时改同一个文件：
+每个人负责自己擅长的区域，避免同时改同一个文件导致冲突：
 
-| 成员 | 负责 | 主要目录 |
-|------|------|----------|
-| A | 后端（共 16 个文件） | `zsc_backend/zsc-module/` + `sql/` |
-| B | 前端（共 6 个文件） | `zsc_frontend/src/views/biz/bill/` + `src/api/biz/bill.js` |
-| C | 菜单/权限/联调 | `sys_menu` SQL + 系统配置 + 整合测试 |
+- **A（后端）**: zsc-module 下的 Java 代码 + sql 脚本
+- **B（前端）**: views/biz/bill/ 下的 Vue 页面 + api/biz/bill.js
+- **C（整合）**: 系统菜单权限配置 + 联调测试
 
 ---
 
@@ -336,37 +334,35 @@ git branch -d feat/bill-service
 
 ---
 
-## 九、速查卡片（打印贴墙上）
+## 九、速查卡片
 
-| 想做什么 | 命令 |
-|----------|------|
-| 克隆项目 | `git clone git@github.com:cupcoff1/Bill-Review-System.git` |
-| 拉最新代码 | `git pull origin main` |
-| 新建分支 | `git checkout -b feat/分支名` |
-| 看改了啥 | `git status` |
-| 暂存 | `git add .` |
-| 提交 | `git commit -m "做了什么"` |
-| 推送 | `git push origin 分支名` |
-| 切回 main | `git checkout main` |
-| 删分支 | `git branch -d 分支名` |
-| 打标签 | `git tag v0.1-docs` |
-| 推送标签 | `git push origin v0.1-docs` |
+```
+克隆项目        git clone git@github.com:cupcoff1/Bill-Review-System.git
+拉最新代码      git pull origin main
+新建分支        git checkout -b feat/分支名
+看改了啥        git status
+暂存            git add .
+提交            git commit -m "做了什么"
+推送            git push origin 分支名
+切回 main       git checkout main
+删分支          git branch -d 分支名
+打标签          git tag v0.1-docs
+推送标签        git push origin v0.1-docs
+```
 
 ---
 
 ## 十、术语对照表
 
-| 术语 | 人话解释 |
-|------|----------|
-| 仓库 (repo) | 存代码的文件夹 + 全部历史记录 |
-| 分支 (branch) | 一条独立的工作线，基于 main 分叉出来 |
-| main | 主分支，存放正式代码 |
-| commit | 一次快照，记录此刻所有文件的状态 |
-| add | 把修改加到暂存区（放购物车） |
-| push | 把本地 commit 上传到 GitHub |
-| pull | 把 GitHub 上的更新下载到本地 |
-| merge | 把两个分支的代码合成一个 |
-| PR (Pull Request) | 请求别人把你的分支合并到 main |
-| clone | 把远程仓库完整复制到本地电脑 |
-| tag | 给某个 commit 贴个标签，标记重要时刻 |
-| 冲突 (conflict) | 两个人改了同一行，Git 让你二选一 |
+- **仓库 (repo)**: 存代码的文件夹 + 全部历史记录
+- **分支 (branch)**: 一条独立的工作线，基于 main 分叉出来
+- **main**: 主分支，存放正式代码
+- **commit**: 一次快照，记录此刻所有文件的状态
+- **add**: 把修改加到暂存区（放购物车）
+- **push**: 把本地 commit 上传到 GitHub
+- **pull**: 把 GitHub 上的更新下载到本地
+- **merge**: 把两个分支的代码合成一个
+- **PR (Pull Request)**: 请求别人把你的分支合并到 main
+- **clone**: 把远程仓库完整复制到本地电脑
+- **tag**: 给某个 commit 贴个标签，标记重要时刻
+- **冲突 (conflict)**: 两个人改了同一行，Git 让你二选一
