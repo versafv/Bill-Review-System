@@ -21,6 +21,13 @@ logs/
 .DS_Store
 Thumbs.db
 
+# Claude Code
+.claude/
+
+# Obsidian (workspace only)
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+
 # Misc
 *.swp
 *.xml.versionsBackup

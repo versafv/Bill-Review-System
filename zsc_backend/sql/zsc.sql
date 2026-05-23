@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.44, for Linux (x86_64)
 --
--- Host: localhost    Database: book_library
+-- Host: localhost    Database: zsc-train
 -- ------------------------------------------------------
 -- Server version	8.0.44
 
