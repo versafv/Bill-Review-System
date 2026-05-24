@@ -1,17 +1,19 @@
 ---
 tags: [backend, api]
+aliases: [API, 接口, REST, 接口文档]
+created: "2026-05-23"
 ---
 
 # API 接口
 
 ## 全局规范
 
-| 项目 | 说明 |
-|------|------|
-| 认证方式 | `Authorization: Bearer <token>` (JWT) |
-| 内容类型 | `application/json` |
-| 跨域 | CORS 全开（开发阶段） |
-| 文档 | Swagger: http://localhost:8080/swagger-ui/index.html |
+| 项目   | 说明                                                   |
+| ---- | ---------------------------------------------------- |
+| 认证方式 | `Authorization: Bearer <token>` (JWT)                |
+| 内容类型 | `application/json`                                   |
+| 跨域   | CORS 全开（开发阶段）                                        |
+| 文档   | Swagger: http://localhost:8080/swagger-ui/index.html |
 
 ## 通用响应格式
 

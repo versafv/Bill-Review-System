@@ -1,5 +1,7 @@
 ---
 tags: [backend, module]
+aliases: [framework, 框架核心, Security, AOP]
+created: "2026-05-23"
 ---
 
 # zsc-framework（框架核心）

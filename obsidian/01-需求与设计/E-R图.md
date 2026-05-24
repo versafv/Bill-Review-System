@@ -1,5 +1,7 @@
 ---
 tags: [design, diagram]
+aliases: [ER图, 实体关系图, Entity Relationship]
+created: "2026-05-23"
 ---
 
 # E-R 图

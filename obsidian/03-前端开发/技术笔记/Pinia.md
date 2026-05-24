@@ -1,5 +1,7 @@
 ---
 tags: [tech-note, frontend]
+aliases: [状态管理, Store, Pinia 3]
+created: "2026-05-23"
 ---
 
 # Pinia

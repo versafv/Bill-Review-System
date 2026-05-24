@@ -1,5 +1,7 @@
 ---
 tags: [tech-note, backend, security]
+aliases: [JSON Web Token, Token认证, 无状态认证]
+created: "2026-05-23"
 ---
 
 # JWT (JSON Web Token)

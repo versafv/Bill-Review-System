@@ -1,5 +1,7 @@
 ---
 tags: [backend, module]
+aliases: [admin, 启动模块, Controller]
+created: "2026-05-23"
 ---
 
 # zsc-admin（应用启动入口）

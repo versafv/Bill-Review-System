@@ -1,5 +1,7 @@
 ---
 tags: [backend, domain]
+aliases: [DTO, Entity, VO, 数据流转, Domain Lifecycle]
+created: "2026-05-23"
 ---
 
 # Domain 类生命周期

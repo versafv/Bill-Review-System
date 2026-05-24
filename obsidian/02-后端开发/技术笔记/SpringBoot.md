@@ -1,5 +1,7 @@
 ---
 tags: [tech-note, backend, spring]
+aliases: [Spring, Spring Boot 3, 自动配置]
+created: "2026-05-23"
 ---
 
 # Spring Boot
@@ -30,3 +32,9 @@ tags: [tech-note, backend, spring]
 | spring-boot-starter-validation | 参数校验 |
 | spring-boot-starter-aop | AOP 支持 |
 | spring-boot-starter-test | 测试 |
+
+## 相关笔记
+
+- [[../后端总览|后端总览]]
+- [[MyBatis-Plus]]
+- [[SpringSecurity]]

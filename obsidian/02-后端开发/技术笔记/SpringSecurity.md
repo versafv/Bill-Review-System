@@ -1,5 +1,7 @@
 ---
 tags: [tech-note, backend, security]
+aliases: [SpringSecurity, Security, 安全框架, 认证授权]
+created: "2026-05-23"
 ---
 
 # Spring Security

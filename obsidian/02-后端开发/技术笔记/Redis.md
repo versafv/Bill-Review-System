@@ -1,5 +1,7 @@
 ---
 tags: [tech-note, backend, cache]
+aliases: [缓存, Redis Cache, 内存数据库]
+created: "2026-05-23"
 ---
 
 # Redis

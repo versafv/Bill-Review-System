@@ -1,5 +1,7 @@
 ---
 tags: [tech-note, frontend]
+aliases: [Element, UI组件库, el-plus]
+created: "2026-05-23"
 ---
 
 # Element Plus
@@ -43,3 +45,9 @@ import { Edit, Delete, Search } from '@element-plus/icons-vue'
   <el-icon><Edit /></el-icon>
 </template>
 ```
+
+## 相关笔记
+
+- [[../前端总览|前端总览]]
+- [[Vue3]]
+- [[Pinia]]

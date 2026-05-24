@@ -1,5 +1,7 @@
 ---
 tags: [backend, module]
+aliases: [quartz, 定时任务, Cron]
+created: "2026-05-23"
 ---
 
 # zsc-quartz（定时任务）

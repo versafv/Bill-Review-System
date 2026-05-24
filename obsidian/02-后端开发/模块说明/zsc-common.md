@@ -1,5 +1,7 @@
 ---
 tags: [backend, module]
+aliases: [common, 公共工具, 基础设施]
+created: "2026-05-23"
 ---
 
 # zsc-common（公共基础设施）

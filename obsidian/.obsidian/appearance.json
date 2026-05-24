@@ -3,10 +3,10 @@
   "textFontFamily": "",
   "monospaceFontFamily": "JetBrains Mono, Fira Code, Consolas",
   "theme": "obsidian",
-  "cssTheme": "",
+  "cssTheme": "Obsidian gruvbox",
   "translucency": false,
-  "accentColor": "#4c6ef5",
-  "interfaceFontFamily": "",
+  "accentColor": "",
+  "interfaceFontFamily": "Arial Black",
   "showViewHeader": true,
   "nativeMenus": false
 }

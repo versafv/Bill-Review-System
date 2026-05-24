@@ -1,5 +1,7 @@
 ---
 tags: [backend, module]
+aliases: [module, 业务模块, BizCategory, biz_bill]
+created: "2026-05-23"
 ---
 
 # zsc-module（自定义业务模块）

@@ -1,5 +1,7 @@
 ---
 tags: [backend, module]
+aliases: [generator, 代码生成, Velocity]
+created: "2026-05-23"
 ---
 
 # zsc-generator（代码生成器）

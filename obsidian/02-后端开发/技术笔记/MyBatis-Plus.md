@@ -1,5 +1,7 @@
 ---
 tags: [tech-note, backend, orm]
+aliases: [MyBatis, ORM, BaseMapper, LambdaQuery]
+created: "2026-05-23"
 ---
 
 # MyBatis-Plus
@@ -44,3 +46,9 @@ public class BizBillServiceImpl
 | insert(entity) | 插入 |
 | updateById(entity) | 按 ID 更新 |
 | deleteById(id) | 按 ID 删除 |
+
+## 相关笔记
+
+- [[../后端总览|后端总览]]
+- [[SpringBoot]]
+- [[../数据库设计|数据库设计]]

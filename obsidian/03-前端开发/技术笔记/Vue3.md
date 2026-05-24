@@ -1,5 +1,7 @@
 ---
 tags: [tech-note, frontend]
+aliases: [Vue, Vue3, Composition API]
+created: "2026-05-23"
 ---
 
 # Vue 3
@@ -32,3 +34,10 @@ tags: [tech-note, frontend]
 - 所有 `.vue` 文件使用 `<script setup>` 语法
 - Element Plus 组件全局注册
 - 自定义指令 (`directive/`) 用于权限控制
+
+## 相关笔记
+
+- [[../前端总览|前端总览]]
+- [[ElementPlus]]
+- [[Pinia]]
+- [[../路由设计|路由设计]]

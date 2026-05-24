@@ -1,5 +1,7 @@
 ---
 tags: [backend, module]
+aliases: [system, 系统管理, 用户角色菜单]
+created: "2026-05-23"
 ---
 
 # zsc-system（系统管理）
