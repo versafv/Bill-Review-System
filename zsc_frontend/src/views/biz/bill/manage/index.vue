@@ -1,161 +1,276 @@
 <template>
   <div class="app-container dashboard">
-    <!-- 统计卡片 -->
-    <el-row :gutter="20" class="dashboard-stats">
-      <el-col :xs="12" :sm="12" :md="6">
-        <el-card class="stat-card" shadow="hover">
-          <div class="stat-content">
-            <div class="stat-icon total-icon">
-              <el-icon :size="36"><Document /></el-icon>
-            </div>
-            <div class="stat-info">
-              <div class="stat-value">{{ statistics.total }}</div>
-              <div class="stat-label">全部票据</div>
-            </div>
-          </div>
-        </el-card>
-      </el-col>
-      <el-col :xs="12" :sm="12" :md="6">
-        <el-card class="stat-card" shadow="hover">
-          <div class="stat-content">
-            <div class="stat-icon draft-icon">
-              <el-icon :size="36"><Edit /></el-icon>
-            </div>
-            <div class="stat-info">
-              <div class="stat-value">{{ statistics.draft }}</div>
-              <div class="stat-label">草稿中</div>
-            </div>
-          </div>
-        </el-card>
-      </el-col>
-      <el-col :xs="12" :sm="12" :md="6">
-        <el-card class="stat-card" shadow="hover">
-          <div class="stat-content">
-            <div class="stat-icon pending-icon">
-              <el-icon :size="36"><Clock /></el-icon>
-            </div>
-            <div class="stat-info">
-              <div class="stat-value">{{ statistics.pending }}</div>
-              <div class="stat-label">审批中</div>
-            </div>
-          </div>
-        </el-card>
-      </el-col>
-      <el-col :xs="12" :sm="12" :md="6">
-        <el-card class="stat-card" shadow="hover">
-          <div class="stat-content">
-            <div class="stat-icon approved-icon">
-              <el-icon :size="36"><CircleCheck /></el-icon>
-            </div>
-            <div class="stat-info">
-              <div class="stat-value">{{ statistics.approved }}</div>
-              <div class="stat-label">已通过</div>
-            </div>
-          </div>
-        </el-card>
-      </el-col>
-    </el-row>
 
-    <!-- 图表区 -->
-    <el-row :gutter="20" class="dashboard-charts">
-      <el-col :xs="24" :sm="24" :md="12" :lg="8">
-        <el-card class="chart-card">
-          <template #header>
-            <div class="card-header">
-              <span>票据状态分布</span>
+    <!-- ==================== 审核员视图 ==================== -->
+    <template v-if="isReviewer">
+      <el-row :gutter="20" class="dashboard-stats">
+        <el-col :xs="12" :sm="8" :md="span5">
+          <el-card class="stat-card" shadow="hover">
+            <div class="stat-content">
+              <div class="stat-icon pending-icon">
+                <el-icon :size="36"><Clock /></el-icon>
+              </div>
+              <div class="stat-info">
+                <div class="stat-value">{{ reviewerStats.pendingCount }}</div>
+                <div class="stat-label">待审核</div>
+              </div>
             </div>
-          </template>
-          <div ref="statusChartRef" class="chart-container"></div>
-        </el-card>
-      </el-col>
-      <el-col :xs="24" :sm="24" :md="12" :lg="8">
-        <el-card class="chart-card">
-          <template #header>
-            <div class="card-header">
-              <span>各类别金额汇总</span>
-              <el-tag type="success" size="small" style="margin-left: 8px;">已通过</el-tag>
+          </el-card>
+        </el-col>
+        <el-col :xs="12" :sm="8" :md="span5">
+          <el-card class="stat-card" shadow="hover">
+            <div class="stat-content">
+              <div class="stat-icon approved-icon">
+                <el-icon :size="36"><CircleCheck /></el-icon>
+              </div>
+              <div class="stat-info">
+                <div class="stat-value">{{ reviewerStats.todayApproved }}</div>
+                <div class="stat-label">今日通过</div>
+              </div>
             </div>
-          </template>
-          <div ref="trendChartRef" class="chart-container"></div>
-        </el-card>
-      </el-col>
-      <el-col :xs="24" :sm="24" :md="12" :lg="8">
-        <el-card class="chart-card">
-          <template #header>
-            <div class="card-header">
-              <span>快捷操作</span>
+          </el-card>
+        </el-col>
+        <el-col :xs="12" :sm="8" :md="span5">
+          <el-card class="stat-card" shadow="hover">
+            <div class="stat-content">
+              <div class="stat-icon rejected-icon">
+                <el-icon :size="36"><CircleClose /></el-icon>
+              </div>
+              <div class="stat-info">
+                <div class="stat-value">{{ reviewerStats.todayRejected }}</div>
+                <div class="stat-label">今日退回</div>
+              </div>
             </div>
-          </template>
-          <div class="quick-actions">
-            <el-button type="primary" icon="Plus" size="large" @click="goCreate">新增票据</el-button>
-            <el-button type="success" icon="Document" size="large" @click="goMyBill">我的票据</el-button>
-          </div>
-        </el-card>
-      </el-col>
-    </el-row>
+          </el-card>
+        </el-col>
+        <el-col :xs="12" :sm="8" :md="span5">
+          <el-card class="stat-card" shadow="hover">
+            <div class="stat-content">
+              <div class="stat-icon rate-icon">
+                <el-icon :size="36"><TrendCharts /></el-icon>
+              </div>
+              <div class="stat-info">
+                <div class="stat-value">{{ reviewerStats.approvalRate }}%</div>
+                <div class="stat-label">通过率</div>
+              </div>
+            </div>
+          </el-card>
+        </el-col>
+        <el-col :xs="12" :sm="8" :md="span5">
+          <el-card class="stat-card" shadow="hover">
+            <div class="stat-content">
+              <div class="stat-icon stale-icon">
+                <el-icon :size="36"><WarningFilled /></el-icon>
+              </div>
+              <div class="stat-info">
+                <div class="stat-value stale-value">{{ reviewerStats.stalePending }}</div>
+                <div class="stat-label">积压预警 (&gt;3天)</div>
+              </div>
+            </div>
+          </el-card>
+        </el-col>
+      </el-row>
 
-    <!-- 最近票据 -->
-    <el-row :gutter="20" class="dashboard-tables">
-      <el-col :span="24">
-        <el-card class="table-card">
-          <template #header>
-            <div class="card-header">
-              <span>最近创建的票据</span>
-              <el-button type="primary" link @click="goMyBill">查看全部</el-button>
+      <el-row :gutter="20" class="dashboard-table-row">
+        <el-col :span="24">
+          <el-card class="table-card">
+            <template #header>
+              <div class="card-header">
+                <span>最近审核记录</span>
+                <el-button type="primary" link @click="goReview">去审核</el-button>
+              </div>
+            </template>
+            <el-table v-loading="reviewerLoading" :data="reviewerStats.recentReviews" style="width: 100%" max-height="400">
+              <el-table-column label="票据编号" prop="billNo" :show-overflow-tooltip="true" min-width="160" />
+              <el-table-column label="标题" prop="title" :show-overflow-tooltip="true" min-width="180" />
+              <el-table-column label="类别" prop="categoryName" width="100" />
+              <el-table-column label="金额" prop="amount" width="120">
+                <template #default="scope">
+                  <span>{{ formatAmount(scope.row.amount) }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column label="结果" prop="status" width="80">
+                <template #default="scope">
+                  <dict-tag :options="biz_bill_status" :value="scope.row.status" />
+                </template>
+              </el-table-column>
+              <el-table-column label="审核时间" prop="auditTime" width="160">
+                <template #default="scope">
+                  <span>{{ parseTime(scope.row.auditTime) }}</span>
+                </template>
+              </el-table-column>
+            </el-table>
+          </el-card>
+        </el-col>
+      </el-row>
+    </template>
+
+    <!-- ==================== 普通用户视图 ==================== -->
+    <template v-else>
+      <el-row :gutter="20" class="dashboard-stats">
+        <el-col :xs="12" :sm="12" :md="6">
+          <el-card class="stat-card" shadow="hover">
+            <div class="stat-content">
+              <div class="stat-icon total-icon">
+                <el-icon :size="36"><Document /></el-icon>
+              </div>
+              <div class="stat-info">
+                <div class="stat-value">{{ statistics.total }}</div>
+                <div class="stat-label">全部票据</div>
+              </div>
             </div>
-          </template>
-          <el-table v-loading="loading" :data="recentBills" style="width: 100%" max-height="340">
-            <el-table-column label="票据编号" prop="billNo" :show-overflow-tooltip="true" min-width="160" />
-            <el-table-column label="标题" prop="title" :show-overflow-tooltip="true" min-width="180" />
-            <el-table-column label="类别" prop="categoryName" width="100" />
-            <el-table-column label="金额" prop="amount" width="120">
-              <template #default="scope">
-                <span>{{ formatAmount(scope.row.amount) }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="状态" prop="status" width="90">
-              <template #default="scope">
-                <dict-tag :options="biz_bill_status" :value="scope.row.status" />
-              </template>
-            </el-table-column>
-            <el-table-column label="创建时间" prop="createTime" width="160">
-              <template #default="scope">
-                <span>{{ parseTime(scope.row.createTime) }}</span>
-              </template>
-            </el-table-column>
-          </el-table>
-        </el-card>
-      </el-col>
-    </el-row>
+          </el-card>
+        </el-col>
+        <el-col :xs="12" :sm="12" :md="6">
+          <el-card class="stat-card" shadow="hover">
+            <div class="stat-content">
+              <div class="stat-icon draft-icon">
+                <el-icon :size="36"><Edit /></el-icon>
+              </div>
+              <div class="stat-info">
+                <div class="stat-value">{{ statistics.draft }}</div>
+                <div class="stat-label">草稿中</div>
+              </div>
+            </div>
+          </el-card>
+        </el-col>
+        <el-col :xs="12" :sm="12" :md="6">
+          <el-card class="stat-card" shadow="hover">
+            <div class="stat-content">
+              <div class="stat-icon pending-icon">
+                <el-icon :size="36"><Clock /></el-icon>
+              </div>
+              <div class="stat-info">
+                <div class="stat-value">{{ statistics.pending }}</div>
+                <div class="stat-label">审批中</div>
+              </div>
+            </div>
+          </el-card>
+        </el-col>
+        <el-col :xs="12" :sm="12" :md="6">
+          <el-card class="stat-card" shadow="hover">
+            <div class="stat-content">
+              <div class="stat-icon approved-icon">
+                <el-icon :size="36"><CircleCheck /></el-icon>
+              </div>
+              <div class="stat-info">
+                <div class="stat-value">{{ statistics.approved }}</div>
+                <div class="stat-label">已通过</div>
+              </div>
+            </div>
+          </el-card>
+        </el-col>
+      </el-row>
+
+      <el-row :gutter="20" class="dashboard-charts">
+        <el-col :xs="24" :sm="24" :md="12" :lg="8">
+          <el-card class="chart-card">
+            <template #header>
+              <div class="card-header">
+                <span>票据状态分布</span>
+              </div>
+            </template>
+            <div ref="statusChartRef" class="chart-container"></div>
+          </el-card>
+        </el-col>
+        <el-col :xs="24" :sm="24" :md="12" :lg="8">
+          <el-card class="chart-card">
+            <template #header>
+              <div class="card-header">
+                <span>各类别金额汇总</span>
+                <el-tag type="success" size="small" style="margin-left: 8px;">已通过</el-tag>
+              </div>
+            </template>
+            <div ref="trendChartRef" class="chart-container"></div>
+          </el-card>
+        </el-col>
+        <el-col :xs="24" :sm="24" :md="12" :lg="8">
+          <el-card class="chart-card">
+            <template #header>
+              <div class="card-header">
+                <span>快捷操作</span>
+              </div>
+            </template>
+            <div class="quick-actions">
+              <el-button type="primary" icon="Plus" size="large" @click="goCreate">新增票据</el-button>
+              <el-button type="success" icon="Document" size="large" @click="goMyBill">我的票据</el-button>
+            </div>
+          </el-card>
+        </el-col>
+      </el-row>
+
+      <el-row :gutter="20" class="dashboard-tables">
+        <el-col :span="24">
+          <el-card class="table-card">
+            <template #header>
+              <div class="card-header">
+                <span>最近创建的票据</span>
+                <el-button type="primary" link @click="goMyBill">查看全部</el-button>
+              </div>
+            </template>
+            <el-table v-loading="loading" :data="recentBills" style="width: 100%" max-height="340">
+              <el-table-column label="票据编号" prop="billNo" :show-overflow-tooltip="true" min-width="160" />
+              <el-table-column label="标题" prop="title" :show-overflow-tooltip="true" min-width="180" />
+              <el-table-column label="类别" prop="categoryName" width="100" />
+              <el-table-column label="金额" prop="amount" width="120">
+                <template #default="scope">
+                  <span>{{ formatAmount(scope.row.amount) }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column label="状态" prop="status" width="90">
+                <template #default="scope">
+                  <dict-tag :options="biz_bill_status" :value="scope.row.status" />
+                </template>
+              </el-table-column>
+              <el-table-column label="创建时间" prop="createTime" width="160">
+                <template #default="scope">
+                  <span>{{ parseTime(scope.row.createTime) }}</span>
+                </template>
+              </el-table-column>
+            </el-table>
+          </el-card>
+        </el-col>
+      </el-row>
+    </template>
   </div>
 </template>
 
 <script setup name="BillManage">
-import { ref, onMounted, nextTick } from 'vue'
-import { Document, Edit, Clock, CircleCheck } from '@element-plus/icons-vue'
+import { ref, computed, onMounted, nextTick } from 'vue'
+import { Document, Edit, Clock, CircleCheck, CircleClose, TrendCharts, WarningFilled } from '@element-plus/icons-vue'
 import * as echarts from 'echarts'
 import { useRouter } from 'vue-router'
 import useSettingsStore from '@/store/modules/settings'
-import { listBill, getCategorySummary } from '@/api/biz/bill'
+import useUserStore from '@/store/modules/user'
+import { listBill, getCategorySummary, getReviewerStats } from '@/api/biz/bill'
 
 const { proxy } = getCurrentInstance()
 const settingsStore = useSettingsStore()
+const userStore = useUserStore()
 const { biz_bill_status } = proxy.useDict('biz_bill_status')
 const router = useRouter()
+
+const isReviewer = computed(() => userStore.roles.includes('reviewer'))
+const span5 = 24 / 5  // 5 列均分
 
 const statusChartRef = ref(null)
 const trendChartRef = ref(null)
 const loading = ref(false)
+const reviewerLoading = ref(false)
 
-const statistics = ref({
-  total: 0,
-  draft: 0,
-  pending: 0,
-  approved: 0,
-  rejected: 0
-})
-
+// 普通用户数据
+const statistics = ref({ total: 0, draft: 0, pending: 0, approved: 0, rejected: 0 })
 const recentBills = ref([])
+
+// 审核员数据
+const reviewerStats = ref({
+  pendingCount: 0,
+  todayApproved: 0,
+  todayRejected: 0,
+  approvalRate: 0,
+  stalePending: 0,
+  recentReviews: []
+})
 
 function formatAmount(amount) {
   if (amount == null) return '-'
@@ -167,21 +282,16 @@ function parseTime(time) {
   return proxy.parseTime(time)
 }
 
+// ==================== 普通用户图表 ====================
 function initStatusChart() {
   if (!statusChartRef.value) return
   const chart = echarts.init(statusChartRef.value)
   const isDark = settingsStore.isDark
-  const option = {
+  chart.setOption({
     tooltip: { trigger: 'item', formatter: '{a} <br/>{b}: {c} ({d}%)' },
-    legend: {
-      orient: 'vertical', left: 'left', top: 'middle',
-      textStyle: { color: isDark ? '#ccc' : '#333' }
-    },
+    legend: { orient: 'vertical', left: 'left', top: 'middle', textStyle: { color: isDark ? '#ccc' : '#333' } },
     series: [{
-      name: '票据状态',
-      type: 'pie',
-      radius: '60%',
-      center: ['60%', '50%'],
+      name: '票据状态', type: 'pie', radius: '60%', center: ['60%', '50%'],
       label: { color: isDark ? '#ccc' : '#333' },
       data: [
         { value: statistics.value.draft, name: '草稿' },
@@ -189,70 +299,36 @@ function initStatusChart() {
         { value: statistics.value.approved, name: '已通过' },
         { value: statistics.value.rejected, name: '已退回' }
       ].filter(d => d.value > 0),
-      emphasis: {
-        itemStyle: { shadowBlur: 10, shadowOffsetX: 0, shadowColor: 'rgba(0, 0, 0, 0.5)' }
-      }
+      emphasis: { itemStyle: { shadowBlur: 10, shadowOffsetX: 0, shadowColor: 'rgba(0, 0, 0, 0.5)' } }
     }]
-  }
-  chart.setOption(option)
+  })
   window.addEventListener('resize', () => chart.resize())
 }
 
 function initCategoryChart(data) {
   if (!trendChartRef.value) return
   const chart = echarts.init(trendChartRef.value)
-  const labels = data.map(d => d.label)
-  const values = data.map(d => d.count)
   const isDark = settingsStore.isDark
-
-  const option = {
+  chart.setOption({
     tooltip: { trigger: 'axis', formatter: p => `${p[0].name}<br/>¥${p[0].value.toLocaleString()}` },
     grid: { left: '3%', right: '10%', bottom: '3%', containLabel: true },
-    xAxis: {
-      type: 'value',
-      name: '金额 (¥)',
-      nameTextStyle: { color: isDark ? '#ccc' : '#666' },
-      axisLabel: { color: isDark ? '#aaa' : '#666' }
-    },
-    yAxis: {
-      type: 'category',
-      data: labels,
-      axisLabel: { color: isDark ? '#ccc' : '#333', fontWeight: 'bold' },
-      axisLine: { lineStyle: { color: isDark ? '#555' : '#ddd' } }
-    },
+    xAxis: { type: 'value', name: '金额 (¥)', nameTextStyle: { color: isDark ? '#ccc' : '#666' }, axisLabel: { color: isDark ? '#aaa' : '#666' } },
+    yAxis: { type: 'category', data: data.map(d => d.label), axisLabel: { color: isDark ? '#ccc' : '#333', fontWeight: 'bold' } },
     series: [{
-      name: '金额',
-      type: 'bar',
-      data: values,
-      itemStyle: {
-        color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
-          { offset: 0, color: '#409EFF' },
-          { offset: 1, color: '#67C23A' }
-        ])
-      },
-      label: {
-        show: true,
-        position: 'right',
-        color: isDark ? '#ddd' : '#333',
-        fontWeight: 'bold',
-        formatter: p => '¥' + p.value.toLocaleString()
-      }
+      name: '金额', type: 'bar', data: data.map(d => d.count),
+      itemStyle: { color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [{ offset: 0, color: '#409EFF' }, { offset: 1, color: '#67C23A' }]) },
+      label: { show: true, position: 'right', color: isDark ? '#ddd' : '#333', fontWeight: 'bold', formatter: p => '¥' + p.value.toLocaleString() }
     }]
-  }
-  chart.setOption(option)
+  })
   window.addEventListener('resize', () => chart.resize())
 }
 
-function loadData() {
+function loadUserData() {
   loading.value = true
   listBill({ currentPage: 1, pageSize: 10 }).then(res => {
     const list = res.data.list || []
     recentBills.value = list.slice(0, 5)
-    const total = res.data.total || 0
-
-    // 统计各状态数量（基于当前分页数据估算，完整统计需后端接口）
-    statistics.value.total = total
-    // 分状态调用查询获取准确数据
+    statistics.value.total = res.data.total || 0
     Promise.all([
       listBill({ currentPage: 1, pageSize: 1, status: '0' }),
       listBill({ currentPage: 1, pageSize: 1, status: '1' }),
@@ -263,34 +339,33 @@ function loadData() {
       statistics.value.pending = pendingRes.data.total || 0
       statistics.value.approved = approvedRes.data.total || 0
       statistics.value.rejected = rejectedRes.data.total || 0
-      // 用总数减去已知的来计算其他状态
-      if (statistics.value.draft + statistics.value.pending + statistics.value.approved < statistics.value.total) {
-        // 可能有退回等状态
-      }
     }).finally(() => {
       nextTick(() => {
         initStatusChart()
-        getCategorySummary().then(res => {
-          initCategoryChart(res.data || [])
-        }).catch(() => {
-          initCategoryChart([])
-        })
+        getCategorySummary().then(res => initCategoryChart(res.data || [])).catch(() => initCategoryChart([]))
       })
     })
-  }).finally(() => {
-    loading.value = false
-  })
+  }).finally(() => { loading.value = false })
 }
 
-function goCreate() {
-  router.push('/bill/myBill')
+// ==================== 审核员数据 ====================
+function loadReviewerData() {
+  reviewerLoading.value = true
+  getReviewerStats().then(res => {
+    reviewerStats.value = res.data
+  }).finally(() => { reviewerLoading.value = false })
 }
-function goMyBill() {
-  router.push('/bill/myBill')
-}
+
+function goCreate() { router.push('/bill/myBill') }
+function goMyBill() { router.push('/bill/myBill') }
+function goReview() { router.push('/bill/review') }
 
 onMounted(() => {
-  loadData()
+  if (isReviewer.value) {
+    loadReviewerData()
+  } else {
+    loadUserData()
+  }
 })
 </script>
 
@@ -300,6 +375,10 @@ onMounted(() => {
 
   .dashboard-stats {
     margin-bottom: 20px;
+
+    .el-col {
+      margin-bottom: 16px;
+    }
 
     .stat-card {
       transition: all 0.3s;
@@ -323,12 +402,16 @@ onMounted(() => {
           &.draft-icon     { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: #fff; }
           &.pending-icon   { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: #fff; }
           &.approved-icon  { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: #fff; }
+          &.rejected-icon  { background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%); color: #fff; }
+          &.rate-icon      { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; }
+          &.stale-icon     { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: #fff; }
         }
 
         .stat-info {
           text-align: center;
-          .stat-value { font-size: 32px; font-weight: bold; color: #303133; margin-bottom: 5px; }
-          .stat-label { font-size: 14px; color: #909399; }
+          .stat-value { font-size: 32px; font-weight: bold; color: var(--el-text-color-primary); margin-bottom: 5px; }
+          .stat-value.stale-value { color: #e6a23c; }
+          .stat-label { font-size: 14px; color: var(--el-text-color-secondary); }
         }
       }
     }
@@ -352,6 +435,7 @@ onMounted(() => {
     }
   }
 
+  .dashboard-table-row .table-card .card-header,
   .dashboard-tables .table-card .card-header {
     display: flex;
     justify-content: space-between;

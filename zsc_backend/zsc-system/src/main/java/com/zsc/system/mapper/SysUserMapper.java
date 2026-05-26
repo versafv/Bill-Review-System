@@ -147,4 +147,12 @@ public interface SysUserMapper
      * @return 结果
      */
     public SysUser checkEmailUnique(String email);
+
+    int countUser();
+
+    int countUserByRoleKey(@Param("roleKey") String roleKey);
+
+    List<SysUser> selectUserWithRoles(@Param("userName") String userName,
+                                     @Param("roleKey") String roleKey,
+                                     @Param("status") String status);
 }

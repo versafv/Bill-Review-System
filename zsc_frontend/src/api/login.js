@@ -47,6 +47,16 @@ export function logout() {
   })
 }
 
+// 提交注册申请（邮箱+说明）
+export function submitRegisterRequest(data) {
+  return request({
+    url: '/api/register-request',
+    headers: { isToken: false },
+    method: 'post',
+    data
+  })
+}
+
 // 获取验证码
 export function getCodeImg() {
   return request({

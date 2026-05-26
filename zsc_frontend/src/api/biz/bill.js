@@ -69,6 +69,14 @@ export function delBill(id) {
   })
 }
 
+// 审核员仪表盘统计
+export function getReviewerStats() {
+  return request({
+    url: '/api/bill/reviewer-stats',
+    method: 'get'
+  })
+}
+
 // 审批票据（通过 / 退回）
 export function reviewBill(data) {
   return request({

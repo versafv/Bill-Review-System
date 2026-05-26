@@ -1,10 +1,10 @@
 <template>
   <div class="sidebar-logo-container" :class="{ 'collapse': collapse }">
     <transition name="sidebarLogoFade">
-      <router-link v-if="collapse" key="collapse" class="sidebar-logo-link" to="/">
+      <router-link v-if="collapse" key="collapse" class="sidebar-logo-link" :to="homePath">
         <img :src="logo" class="sidebar-logo" />
       </router-link>
-      <router-link v-else key="expand" class="sidebar-logo-link" to="/">
+      <router-link v-else key="expand" class="sidebar-logo-link" :to="homePath">
         <img :src="logo" class="sidebar-logo" />
         <h1 class="sidebar-title">{{ title }}</h1>
       </router-link>
@@ -31,6 +31,11 @@ const title = computed(() => {
     return '票据管理后台'
   }
   return '票据报销系统'
+})
+const homePath = computed(() => {
+  if (userStore.roles.includes('admin_user')) return '/admin/dashboard'
+  if (userStore.roles.includes('reviewer')) return '/bill/manage'
+  return '/bill/manage'
 })
 const settingsStore = useSettingsStore()
 const sideTheme = computed(() => settingsStore.sideTheme)

@@ -1,43 +1,37 @@
 <template>
   <div class="app-container">
     <!-- 搜索表单 -->
-    <el-form :model="queryParams" ref="queryFormRef" :inline="true" v-show="showSearch" label-width="80px">
-      <el-form-item label="关键字" prop="keywords">
-        <el-input
-          v-model="queryParams.keywords"
-          placeholder="票据编号/标题"
-          clearable
-          style="width: 200px"
-          @keyup.enter="handleQuery"
-        />
+    <el-form :model="queryParams" ref="queryFormRef" :inline="true" class="search-form">
+      <el-form-item prop="keywords">
+        <template #label><svg-icon icon-class="search" /></template>
+        <el-input v-model="queryParams.keywords" placeholder="票据编号/标题" clearable style="width: 160px" @keyup.enter="handleQuery" />
       </el-form-item>
-      <el-form-item label="创建时间">
-        <el-date-picker
-          v-model="dateRange"
-          type="daterange"
-          range-separator="-"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          value-format="YYYY-MM-DD"
-          style="width: 240px"
-        />
+      <el-form-item prop="createBy">
+        <template #label><svg-icon icon-class="submitter" /></template>
+        <el-input v-model="queryParams.createBy" placeholder="提交人" clearable style="width: 110px" @keyup.enter="handleQuery" />
+      </el-form-item>
+      <el-form-item prop="categoryId">
+        <template #label><svg-icon icon-class="category" /></template>
+        <el-select v-model="queryParams.categoryId" placeholder="类别" clearable style="width: 120px">
+          <el-option v-for="cat in categoryOptions" :key="cat.categoryId" :label="cat.categoryName" :value="cat.categoryId" />
+        </el-select>
+      </el-form-item>
+      <el-form-item prop="minAmount">
+        <template #label><svg-icon icon-class="amount" /></template>
+        <el-input v-model="queryParams.minAmount" placeholder="最低" clearable style="width: 80px" @keyup.enter="handleQuery" />
+        <span style="margin: 0 4px; color: #909399;">—</span>
+        <el-input v-model="queryParams.maxAmount" placeholder="最高" clearable style="width: 80px" @keyup.enter="handleQuery" />
+      </el-form-item>
+      <el-form-item prop="dateRange">
+        <template #label><svg-icon icon-class="date-range" /></template>
+        <el-date-picker v-model="dateRange" type="daterange" range-separator="-" start-placeholder="开始" end-placeholder="结束" value-format="YYYY-MM-DD" style="width: 200px" />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-        <el-button @click="resetQuery"><svg-icon icon-class="reset" /> 重置</el-button>
+        <el-button type="primary" icon="Search" circle @click="handleQuery" />
+        <el-button type="primary" circle @click="resetQuery"><svg-icon icon-class="reset" /></el-button>
       </el-form-item>
     </el-form>
 
-    <!-- 工具栏 -->
-    <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <span class="review-tip">
-          <el-icon><InfoFilled /></el-icon>
-          仅显示待审核的票据
-        </span>
-      </el-col>
-      <right-toolbar v-model:showSearch="showSearch" @queryTable="getList" />
-    </el-row>
 
     <!-- 审核列表 -->
     <el-table v-loading="loading" :data="billList">
@@ -52,7 +46,7 @@
       <el-table-column label="提交人" align="center" prop="createBy" width="100" />
       <el-table-column label="提交时间" align="center" prop="createTime" width="160">
         <template #default="scope">
-          <span>{{ parseTime(scope.row.createTime) }}</span>
+          <span :class="{ 'stale-time': isStale(scope.row.createTime) }">{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="160" class-name="small-padding fixed-width">
@@ -120,24 +114,30 @@
 
 <script setup name="BizBillReview">
 import { listBill, getBill, reviewBill } from "@/api/biz/bill"
+import { listBizCategory } from "@/api/biz/bizCategory"
 import BillForm from "@/views/biz/bill/components/BillForm.vue"
 
 const { proxy } = getCurrentInstance()
+const { biz_bill_status } = proxy.useDict('biz_bill_status')
 
 const billList = ref([])
 const loading = ref(true)
-const showSearch = ref(true)
 const total = ref(0)
 const dateRange = ref([])
 const detailOpen = ref(false)
 const reviewOpen = ref(false)
 const detailData = ref({})
 const currentRow = ref({})
+const categoryOptions = ref([])
 
 const queryParams = ref({
   currentPage: 1,
   pageSize: 10,
   keywords: undefined,
+  createBy: undefined,
+  categoryId: undefined,
+  minAmount: undefined,
+  maxAmount: undefined,
   status: "1",
   startTime: undefined,
   endTime: undefined
@@ -213,5 +213,36 @@ function submitReview() {
   })
 }
 
+function isStale(createTime) {
+  if (!createTime) return false
+  const threeDaysAgo = new Date().getTime() - 3 * 24 * 60 * 60 * 1000
+  return new Date(createTime).getTime() < threeDaysAgo
+}
+
+function loadCategories() {
+  listBizCategory({ currentPage: 1, pageSize: 1000 }).then(res => {
+    categoryOptions.value = res.data.list || []
+  })
+}
+
+loadCategories()
 getList()
 </script>
+
+<style scoped>
+.search-form {
+  margin-bottom: 16px;
+}
+.search-form :deep(.el-form-item) {
+  margin-right: 8px;
+  margin-bottom: 0;
+}
+.search-form :deep(.el-form-item__label) {
+  display: flex;
+  align-items: center;
+}
+.stale-time {
+  color: #e6a23c;
+  font-weight: bold;
+}
+</style>

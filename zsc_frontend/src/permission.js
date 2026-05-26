@@ -43,7 +43,11 @@ router.beforeEach((to, from, next) => {
               }
             })
             if (to.path === '/') {
-              next({ path: '/bill/manage', replace: true })
+              const roles = useUserStore().roles
+              const defaultPath = roles.includes('admin_user') ? '/admin/dashboard'
+                : roles.includes('reviewer') ? '/bill/review'
+                : '/bill/manage'
+              next({ path: defaultPath, replace: true })
             } else {
               next({ ...to, replace: true }) // hack方法 确保addRoutes已完成
             }

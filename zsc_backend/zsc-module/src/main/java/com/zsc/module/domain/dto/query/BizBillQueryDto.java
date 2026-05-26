@@ -25,4 +25,16 @@ public class BizBillQueryDto extends BasePageReq {
     /** 创建时间范围-结束 */
     private String endTime;
 
+    /** 按审批人过滤 */
+    private String auditBy;
+
+    /** 按提交人过滤 */
+    private String createBy;
+
+    /** 金额范围-最小 */
+    private Long minAmount;
+
+    /** 金额范围-最大 */
+    private Long maxAmount;
+
 }

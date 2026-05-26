@@ -17,6 +17,7 @@ import com.zsc.module.domain.vo.BizAuditLogVo;
 import com.zsc.module.domain.vo.BizBillDetailVo;
 import com.zsc.module.domain.vo.BizBillFileVo;
 import com.zsc.module.domain.vo.BizBillVo;
+import com.zsc.module.domain.vo.ReviewerStatsVo;
 import com.zsc.module.domain.vo.TrendItemVo;
 import com.zsc.module.mapper.BizAuditLogMapper;
 import com.zsc.module.mapper.BizBillFileMapper;
@@ -111,6 +112,10 @@ public class BizBillServiceImpl extends ServiceImpl<BizBillMapper, BizBill> impl
         }
         wrapper.eq(dto.getCategoryId() != null, BizBill::getCategoryId, dto.getCategoryId())
                .eq(StringUtils.isNotBlank(dto.getStatus()), BizBill::getStatus, dto.getStatus())
+               .like(StringUtils.isNotBlank(dto.getAuditBy()), BizBill::getAuditBy, dto.getAuditBy())
+               .like(StringUtils.isNotBlank(dto.getCreateBy()), BizBill::getCreateBy, dto.getCreateBy())
+               .ge(dto.getMinAmount() != null, BizBill::getAmount, dto.getMinAmount())
+               .le(dto.getMaxAmount() != null, BizBill::getAmount, dto.getMaxAmount())
                .ge(StringUtils.isNotBlank(dto.getStartTime()), BizBill::getCreateTime, dto.getStartTime())
                .le(StringUtils.isNotBlank(dto.getEndTime()), BizBill::getCreateTime, dto.getEndTime())
                .orderByDesc(BizBill::getCreateTime);
@@ -459,6 +464,63 @@ public class BizBillServiceImpl extends ServiceImpl<BizBillMapper, BizBill> impl
         return amountMap.entrySet().stream()
             .map(e -> new TrendItemVo(nameMap.getOrDefault(e.getKey(), "未知"), e.getValue()))
             .collect(Collectors.toList());
+    }
+
+    @Override
+    public ReviewerStatsVo getReviewerStats() {
+        String username = SecurityUtils.getUsername();
+        ReviewerStatsVo vo = new ReviewerStatsVo();
+
+        // 待审核数量
+        vo.setPendingCount((int) this.count(
+            new LambdaQueryWrapper<BizBill>().eq(BizBill::getStatus, "1")));
+
+        // 今日通过/退回
+        String today = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        int todayApproved = (int) this.count(
+            new LambdaQueryWrapper<BizBill>()
+                .eq(BizBill::getAuditBy, username)
+                .eq(BizBill::getStatus, "2")
+                .ge(BizBill::getAuditTime, today));
+        int todayRejected = (int) this.count(
+            new LambdaQueryWrapper<BizBill>()
+                .eq(BizBill::getAuditBy, username)
+                .eq(BizBill::getStatus, "3")
+                .ge(BizBill::getAuditTime, today));
+        vo.setTodayApproved(todayApproved);
+        vo.setTodayRejected(todayRejected);
+
+        // 通过率
+        int totalReviewed = todayApproved + todayRejected;
+        vo.setApprovalRate(totalReviewed > 0
+            ? Math.round(todayApproved * 100.0 / totalReviewed) : 0);
+
+        // 积压预警: 超过3天未审核
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DAY_OF_MONTH, -3);
+        vo.setStalePending((int) this.count(
+            new LambdaQueryWrapper<BizBill>()
+                .eq(BizBill::getStatus, "1")
+                .lt(BizBill::getCreateTime, cal.getTime())));
+
+        // 最近审核记录
+        List<BizBill> recentBills = this.list(
+            new LambdaQueryWrapper<BizBill>()
+                .eq(BizBill::getAuditBy, username)
+                .in(BizBill::getStatus, "2", "3")
+                .orderByDesc(BizBill::getAuditTime)
+                .last("LIMIT 5"));
+        Map<Long, String> categoryNameMap = buildCategoryNameMap(recentBills);
+        vo.setRecentReviews(recentBills.stream().map(bill -> {
+            BizBillVo billVo = new BizBillVo();
+            BeanUtils.copyProperties(bill, billVo);
+            if (bill.getCategoryId() != null) {
+                billVo.setCategoryName(categoryNameMap.get(bill.getCategoryId()));
+            }
+            return billVo;
+        }).collect(Collectors.toList()));
+
+        return vo;
     }
 
 }

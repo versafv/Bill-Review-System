@@ -91,8 +91,8 @@ public class SysRegisterService
             else
             {
                 AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.REGISTER, MessageUtils.message("user.register.success")));
-                // 自动分配"普通用户"角色
-                Long[] roleIds = {3L};
+                // 根据注册时选择的角色类型分配角色
+                Long[] roleIds = "reviewer".equals(registerBody.getRoleKey()) ? new Long[]{4L} : new Long[]{3L};
                 userService.insertUserAuth(sysUser.getUserId(), roleIds);
             }
         }

@@ -60,7 +60,6 @@ export const constantRoutes = [
   {
     path: '',
     component: Layout,
-    redirect: '/bill/manage',
     hidden: true,
     children: []
   },

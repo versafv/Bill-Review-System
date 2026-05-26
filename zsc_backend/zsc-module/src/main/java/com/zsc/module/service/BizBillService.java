@@ -10,6 +10,8 @@ import com.zsc.module.domain.vo.BizBillDetailVo;
 import com.zsc.module.domain.vo.BizBillVo;
 import com.zsc.module.domain.vo.TrendItemVo;
 
+import com.zsc.module.domain.vo.ReviewerStatsVo;
+
 import java.util.List;
 
 /**
@@ -55,5 +57,10 @@ public interface BizBillService extends IService<BizBill> {
     List<TrendItemVo> getMonthlyTrend();
 
     List<TrendItemVo> getCategoryAmountSummary();
+
+    /**
+     * 审核员仪表盘统计数据
+     */
+    ReviewerStatsVo getReviewerStats();
 
 }

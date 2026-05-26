@@ -1,20 +1,22 @@
 <template>
-  <el-form :model="queryParams" ref="queryFormRef" :inline="true" v-show="showSearch" label-width="68px">
-    <el-form-item label="类别名称" prop="categoryName">
+  <el-form :model="queryParams" :inline="true" class="search-form">
+    <el-form-item prop="categoryName">
+      <template #label><svg-icon icon-class="search" /></template>
       <el-input
         v-model="queryParams.categoryName"
-        placeholder="请输入类别名称"
+        placeholder="类别名称"
         clearable
-        style="width: 240px"
+        style="width: 160px"
         @keyup.enter="handleQuery"
       />
     </el-form-item>
-    <el-form-item label="状态" prop="status">
+    <el-form-item prop="status">
+      <template #label><svg-icon icon-class="switch" /></template>
       <el-select
         v-model="queryParams.status"
-        placeholder="请选择状态"
+        placeholder="状态"
         clearable
-        style="width: 240px"
+        style="width: 100px"
       >
         <el-option
           v-for="dict in sys_normal_disable"
@@ -25,8 +27,8 @@
       </el-select>
     </el-form-item>
     <el-form-item>
-      <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-      <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+      <el-button type="primary" icon="Search" circle @click="handleQuery" />
+      <el-button type="primary" circle @click="resetQuery"><svg-icon icon-class="reset" /></el-button>
     </el-form-item>
   </el-form>
 </template>
@@ -39,10 +41,6 @@ const props = defineProps({
   queryParams: {
     type: Object,
     required: true
-  },
-  showSearch: {
-    type: Boolean,
-    default: true
   }
 })
 
@@ -65,3 +63,11 @@ defineExpose({
   queryFormRef
 })
 </script>
+
+<style scoped lang="scss">
+.search-form {
+  margin-bottom: 16px;
+  :deep(.el-form-item) { margin-right: 8px; margin-bottom: 0; }
+  :deep(.el-form-item__label) { display: flex; align-items: center; }
+}
+</style>

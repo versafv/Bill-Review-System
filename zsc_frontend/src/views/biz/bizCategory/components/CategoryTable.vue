@@ -12,16 +12,6 @@
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="success"
-          plain
-          icon="Edit"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['biz:category:edit']"
-        >修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
           type="danger"
           plain
           icon="Delete"
@@ -30,7 +20,6 @@
           v-hasPermi="['biz:category:remove']"
         >删除</el-button>
       </el-col>
-      <right-toolbar :showSearch="showSearch" @update:showSearch="$emit('update:showSearch', $event)" @queryTable="handleQuery"></right-toolbar>
     </el-row>
 
     <el-table v-loading="loading" :data="categoryList" @selection-change="handleSelectionChange">
@@ -96,22 +85,16 @@ const props = defineProps({
     type: Object,
     required: true
   },
-  showSearch: {
-    type: Boolean,
-    default: true
-  }
 })
 
-const emit = defineEmits(['add', 'update', 'delete', 'query', 'pagination', 'update:showSearch', 'update:pageNum', 'update:pageSize'])
+const emit = defineEmits(['add', 'update', 'delete', 'query', 'pagination', 'update:pageNum', 'update:pageSize'])
 
 const ids = ref([])
-const single = ref(true)
 const multiple = ref(true)
 
 /** 多选框选中数据 */
 function handleSelectionChange(selection) {
   ids.value = selection.map(item => item.categoryId)
-  single.value = selection.length != 1
   multiple.value = !selection.length
 }
 

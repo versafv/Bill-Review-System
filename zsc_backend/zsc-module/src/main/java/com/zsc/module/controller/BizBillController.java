@@ -9,6 +9,7 @@ import com.zsc.module.domain.dto.BizBillReviewDto;
 import com.zsc.module.domain.dto.query.BizBillQueryDto;
 import com.zsc.module.domain.vo.BizBillDetailVo;
 import com.zsc.module.domain.vo.BizBillVo;
+import com.zsc.module.domain.vo.ReviewerStatsVo;
 import com.zsc.module.domain.vo.TrendItemVo;
 import com.zsc.module.service.BizBillService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -50,6 +51,27 @@ public class BizBillController {
         PageResult pageResult = bizBillService.queryBills(queryDto);
         log.info(pageResult.getList().toString());
         return ResultVo.ok(pageResult);
+    }
+
+    @Operation(summary = "审核员仪表盘统计")
+    @PreAuthorize("@ss.hasPermi('biz:bill:review')")
+    @GetMapping("/reviewer-stats")
+    public ResultVo<ReviewerStatsVo> reviewerStats() {
+        return ResultVo.ok(bizBillService.getReviewerStats());
+    }
+
+    @Operation(summary = "本月提交趋势")
+    @PreAuthorize("@ss.hasPermi('biz:bill:list')")
+    @GetMapping("/trend")
+    public ResultVo<List<TrendItemVo>> trend() {
+        return ResultVo.ok(bizBillService.getMonthlyTrend());
+    }
+
+    @Operation(summary = "各类别金额汇总")
+    @PreAuthorize("@ss.hasPermi('biz:bill:list')")
+    @GetMapping("/category-summary")
+    public ResultVo<List<TrendItemVo>> categorySummary() {
+        return ResultVo.ok(bizBillService.getCategoryAmountSummary());
     }
 
     /**
@@ -126,19 +148,4 @@ public class BizBillController {
         bizBillService.reviewBill(dto);
         return ResultVo.ok("审核成功");
     }
-
-    @Operation(summary = "本月提交趋势")
-    @PreAuthorize("@ss.hasPermi('biz:bill:list')")
-    @GetMapping("/trend")
-    public ResultVo<List<TrendItemVo>> trend() {
-        return ResultVo.ok(bizBillService.getMonthlyTrend());
-    }
-
-    @Operation(summary = "各类别金额汇总")
-    @PreAuthorize("@ss.hasPermi('biz:bill:list')")
-    @GetMapping("/category-summary")
-    public ResultVo<List<TrendItemVo>> categorySummary() {
-        return ResultVo.ok(bizBillService.getCategoryAmountSummary());
-    }
-
 }

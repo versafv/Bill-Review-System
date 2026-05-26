@@ -1,10 +1,9 @@
 <template>
   <div class="app-container">
     <!-- 搜索组件 -->
-    <SearchForm 
+    <SearchForm
       ref="searchFormRef"
-      :queryParams="queryParams" 
-      :showSearch="showSearch"
+      :queryParams="queryParams"
       @query="handleQuery"
       @reset="handleReset"
     />
@@ -15,8 +14,6 @@
       :loading="loading"
       :total="total"
       :queryParams="queryParams"
-      :showSearch="showSearch"
-      @update:showSearch="showSearch = $event"
       @update:pageNum="queryParams.pageNum = $event"
       @update:pageSize="queryParams.pageSize = $event"
       @add="handleAdd"
@@ -48,7 +45,6 @@ const { proxy } = getCurrentInstance()
 const categoryList = ref([])
 const open = ref(false)
 const loading = ref(true)
-const showSearch = ref(true)
 const total = ref(0)
 const title = ref("")
 
