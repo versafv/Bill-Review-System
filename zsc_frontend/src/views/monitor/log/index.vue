@@ -19,6 +19,7 @@
       <el-col :xs="12" :sm="6" :md="3">
         <el-button type="primary" icon="Refresh" @click="loadLog" :loading="loading">刷新</el-button>
         <el-checkbox v-model="autoRefresh" style="margin-left:8px" @change="toggleAuto">自动</el-checkbox>
+        <el-button type="danger" icon="Delete" style="margin-left:16px" @click="handleClear" :loading="clearing">清空</el-button>
       </el-col>
     </el-row>
 
@@ -29,12 +30,14 @@
 </template>
 
 <script setup>
+import { ElMessageBox, ElMessage } from 'element-plus'
 import request from '@/utils/request'
 
 const currentFile = ref('app.log')
 const maxLines = ref(200)
 const loading = ref(false)
 const autoRefresh = ref(false)
+const clearing = ref(false)
 const content = ref('')
 const logViewer = ref(null)
 let timer = null
@@ -77,6 +80,15 @@ function loadLog() {
       }
     })
   }).finally(() => { loading.value = false })
+}
+
+function handleClear() {
+  ElMessageBox.confirm('确认清空该日志文件吗？', '警告', { type: 'warning' }).then(() => {
+    clearing.value = true
+    request({ url: '/monitor/logs', method: 'delete', params: { file: currentFile.value } })
+      .then(res => { ElMessage.success(res.msg); loadLog() })
+      .finally(() => { clearing.value = false })
+  }).catch(() => {})
 }
 
 function toggleAuto(val) {

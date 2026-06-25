@@ -2,14 +2,16 @@ package com.zsc.web.controller.monitor;
 
 import com.zsc.common.core.domain.AjaxResult;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -52,6 +54,23 @@ public class SysLogController {
             "lines", result.size(),
             "content", String.join("\n", result)
         ));
+    }
+
+    /**
+     * 清空日志文件
+     */
+    @PreAuthorize("@ss.hasPermi('monitor:log:list')")
+    @DeleteMapping
+    public AjaxResult clearLog(@RequestParam(defaultValue = "app") String file) {
+        if (!ALLOWED_FILES.contains(file)) {
+            return AjaxResult.error("不允许操作该日志文件");
+        }
+        try (FileWriter fw = new FileWriter(LOG_DIR + file, false)) {
+            fw.write("");
+        } catch (IOException e) {
+            return AjaxResult.error("清空失败: " + e.getMessage());
+        }
+        return AjaxResult.success("日志已清空");
     }
 
     /**
