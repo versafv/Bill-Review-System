@@ -29,6 +29,9 @@ Thumbs.db
 .obsidian/workspace.json
 .obsidian/workspace-mobile.json
 
+# 敏感配置（含密码）
+application-druid.yml
+
 # Misc
 *.swp
 *.xml.versionsBackup
